@@ -1,0 +1,68 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings FATAL => 'all';
+
+use Net::Appliance::Frontpanel;
+use Getopt::Long;
+use Carp qw(croak);
+
+my ($buildall, $build, $imagemap, $image);
+my $source = 'Netdisco';
+my $configfile = '/etc/netdisco/netdisco.conf';
+
+GetOptions (
+    'build-all' => \$buildall,
+    'build' => \$build,
+    'image-map' => \$imagemap,
+    'image' => \$image,
+    'source=s' => \$source,
+    'configfile=s' => \$configfile,
+);
+
+my $panel = Net::Appliance::Frontpanel->new(
+    configfile => $configfile,
+    source => $source,
+);
+my $ip = shift @ARGV;
+$panel->ip($ip) if defined $ip;
+
+if ($buildall) {
+    $panel->make_cache_all;
+}
+elsif ($build) {
+    croak "must pass an IP address parameter" if !defined $ip;
+    $panel->make_device_cache($ip);
+}
+elsif ($imagemap) {
+    croak "must pass an IP address parameter" if !defined $ip;
+    print $panel->image_map;
+}
+elsif ($image) {
+    croak "must pass an IP address parameter" if !defined $ip;
+    print $panel->image_data;
+}
+else {
+    print <<HELPEND;
+$0: manager for Frontpanel image and imagemap creation
+
+usage:
+
+  frontpanel --build-all             Build metadata cache for all known devices
+  frontpanel --build 192.0.2.1       Build metadata cache for specified device
+
+  frontpanel --image-map 192.0.2.1   Output HTML Image Map for specified device
+  frontpanel --image 192.0.2.1 > file.png
+                                     Output PNG of frontpanel image for specified device
+options:
+
+  --configfile=<file>   Specify alternate config file to Source driver
+  --source=<Source>     Use a diffrent Source driver
+
+HELPEND
+
+    exit 1;
+}
+
+exit 0;
+__END__
