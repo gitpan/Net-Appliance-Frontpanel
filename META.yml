@@ -22,6 +22,7 @@ no_index:
 requires:
   Carp: 0
   Config::Any: 0
+  Config::Tiny: 0
   DBI: 0
   File::Basename: 0
   File::ShareDir: 0
@@ -31,10 +32,12 @@ requires:
   Imager: 0
   List::Util: 0
   Moose: 0
+  MooseX::LogDispatch: 0
+  MooseX::Object::Pluggable: 0
   URI::Escape: 0
   XML::LibXML: 0
   XML::LibXSLT: 0
   perl: 5.8.1
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.01
+version: 0.02
